@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-// Insert a notification
 exports.insertNotification = (memberId, message) => {
     return new Promise((resolve, reject) => {
         const query = `

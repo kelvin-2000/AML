@@ -1,10 +1,9 @@
 const db = require('../config/db');
 
-// Get borrowed media record
 exports.getBorrowedMedia = (memberId, mediaId) => {
     return new Promise((resolve, reject) => {
         const query = `
-            SELECT * FROM BorrowingRequest 
+            SELECT * FROM Borrowing_Request 
             WHERE member_id = ? AND media_id = ? AND status = 'borrowed'
         `;
         db.query(query, [memberId, mediaId], (err, results) => {
@@ -14,11 +13,10 @@ exports.getBorrowedMedia = (memberId, mediaId) => {
     });
 };
 
-// Mark media as returned
 exports.markAsReturned = (requestId) => {
     return new Promise((resolve, reject) => {
         const query = `
-            UPDATE BorrowingRequest 
+            UPDATE Borrowing_Request 
             SET return_date = CURDATE(), status = 'returned' 
             WHERE request_id = ?
         `;
