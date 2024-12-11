@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,20 +10,72 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+
+interface IMember {
+  member_id: number;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  formattedMember: string;
+}
 
 const ReturnForm = () => {
   const params = useSearchParams();
+  const router = useRouter();
   const media = params.get("media");
   const id = Number(params.get("id"));
   const [form, setForm] = useState({ memberId: "", mediaId: id });
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<any>(null);
+  const [members, setMembers] = useState<IMember[] | null>(null);
+  const [memberError, setMemberError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+
+  const fetchMemberDetails = async () => {
+    if (!form.memberId) {
+      setMemberError("Please enter a valid Member ID.");
+      return;
+    }
+    setMemberError(null);
+    setMembers(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch(`http://localhost:8080/members`);
+      if (!res.ok) throw new Error("Failed to fetch members");
+
+      const data = await res.json();
+      if (!data.members || !Array.isArray(data.members)) {
+        throw new Error(
+          "Invalid response structure: 'member' is missing or not an array"
+        );
+      }
+      setMembers(data.members);
+      const foundMember = data.members.find(
+        (m: IMember) => m.member_id === Number(form.memberId)
+      );
+      if (!foundMember) {
+        setMemberError("No member found with the given ID.");
+      }
+    } catch (error: any) {
+      console.log("Error fetching members:", error);
+      setMemberError("Failed to fetch member details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const member = useMemo(() => {
+    if (!form.memberId || !members) return null;
+
+    return members.find((m) => m.member_id === Number(form.memberId));
+  }, [form.memberId, members]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -45,7 +97,7 @@ const ReturnForm = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <Card className="w-full max-w-md p-6 bg-white/50 rounded-lg shadow-lg">
+      <Card className="w-full max-w-md p-6 bg-white/50 rounded shadow-lg">
         {response && (
           <div
             className={`mt-4 p-4 rounded shadow-lg ${
@@ -73,36 +125,58 @@ const ReturnForm = () => {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6">
             <div>
-              <Label className="mb-2 block text-sm font-medium text-text" htmlFor="mediaId">
-                Media
+              <Label
+                className="mb-2 block text-sm font-medium text-text"
+                htmlFor="mediaId"
+              >
+                Media Name
               </Label>
               <Input
                 id="mediaId"
                 name="mediaId"
                 value={String(media)}
                 disabled
-                className="text-gray-900 font-bold bg-gray-100 border border-gray-300 rounded-md"
+                className=" font-bold rounded"
               />
             </div>
             <div>
-              <Label className="mb-2 block text-sm font-medium text-text" htmlFor="memberId">
-                Library Member ID
+              <Label
+                className="mb-2 block text-sm font-medium text-text"
+                htmlFor="memberId"
+              >
+                Library Member
               </Label>
-              <Input
-                id="memberId"
-                name="memberId"
-                value={form.memberId}
-                onChange={handleChange}
-                placeholder="Enter Member ID"
-                required
-                className="bg-white border border-gray-300 rounded-md focus:ring focus:ring-indigo-400"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="memberId"
+                  name="memberId"
+                  value={form.memberId}
+                  onChange={handleChange}
+                  placeholder="Enter Library Member ID"
+                  required
+                  className={"rounded"}
+                />
+                <Button
+                  type="button"
+                  onClick={fetchMemberDetails}
+                  className="px-4 py-2 bg-active text-background rounded hover:bg-background hover:text-text"
+                >
+                  {loading ? "Loading..." : "Find"}
+                </Button>
+              </div>
+              {member && form.memberId && (
+                <Input value={member.name} disabled className="mt-2 rounded" />
+              )}
+              {memberError && (
+                <p className="mt-2 text-sm text-red-500">{memberError}</p>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex gap-4">
             <Button
+              onClick={() => router.back()}
               type="button"
-              className="w-full px-4 py-2 text-text rounded bg-muted  hover:bg-background"
+              className="w-full px-4 py-2 text-text rounded bg-muted hover:bg-background"
             >
               Cancel
             </Button>
@@ -138,7 +212,6 @@ const ReturnForm = () => {
             </Button>
           </CardFooter>
         </form>
-
       </Card>
     </div>
   );

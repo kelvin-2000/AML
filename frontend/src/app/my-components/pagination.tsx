@@ -7,33 +7,34 @@ interface PaginationProps {
 }
 
 export function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: PaginationProps) {
+                             currentPage,
+                             totalPages,
+                             onPageChange,
+                           }: PaginationProps) {
   const getClassName = (isActive: boolean) =>
-    `relative block rounded-full px-3 py-1.5 text-sm transition duration-300 ${
+    `relative block rounded-full px-3 py-1.5 text-sm transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b39977] ${
       isActive
         ? "bg-[#342519] text-[#ede6d9] font-medium dark:bg-slate-900 dark:text-primary-500"
-        : "bg-transparent text-surface hover:bg-[#b39977] "
+        : "bg-transparent text-surface hover:bg-[#b39977] hover:text-white"
     }`;
 
-  if (totalPages == null) return ;
+  if (totalPages == null) return null;
 
   return (
     <nav
       aria-label="Page navigation example"
       className="flex justify-center pt-2 mt-2"
     >
-      <ul className="list-style-none flex">
+      <ul className="list-style-none flex gap-2">
         <li>
           <button
             onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-            className={`${
+            disabled={currentPage === 1}
+            className={`relative block rounded-full bg-transparent px-3 py-1.5 text-sm transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b39977] ${
               currentPage === 1
-                ? "pointer-events-none text-surface/50"
-                : "text-surface hover:bg-[#b39977]"
-            } relative block rounded-full bg-transparent px-3 py-1.5 text-sm transition duration-300 dark:text-neutral-400`}
+                ? "pointer-events-none text-surface/50 bg-gray-100 cursor-not-allowed"
+                : "text-surface hover:bg-[#b39977] hover:text-white"
+            }`}
           >
             Prev
           </button>
@@ -61,11 +62,12 @@ export function Pagination({
             onClick={() =>
               currentPage < totalPages && onPageChange(currentPage + 1)
             }
-            className={`${
+            disabled={currentPage === totalPages}
+            className={`relative block rounded-full bg-transparent px-3 py-1.5 text-sm transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b39977] ${
               currentPage === totalPages
-                ? "pointer-events-none text-surface/50"
-                : "text-surface hover:bg-[#b39977]"
-            } relative block rounded-full bg-transparent px-3 py-1.5 text-sm transition duration-300 dark:text-neutral-400`}
+                ? "pointer-events-none text-surface/50 bg-gray-100 cursor-not-allowed"
+                : "text-surface hover:bg-[#b39977] hover:text-white"
+            }`}
           >
             Next
           </button>
