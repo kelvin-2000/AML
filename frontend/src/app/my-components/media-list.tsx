@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { Pagination } from "./pagination";
 import Image from "next/image";
+import Loading from "@/app/my-components/Loading";
 
 export interface  MediaItem  {
   media_id: number;
@@ -53,7 +54,7 @@ console.log("mediaList",mediaList)
   const handlePageChange = (page: number) => setCurrentPage(page);
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading...</div>;
+    return <Loading/>
   }
 
   return (
