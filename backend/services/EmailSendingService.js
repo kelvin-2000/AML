@@ -11,7 +11,8 @@ exports.sendEmail = async (
     name,
     title,
     dueDate,
-    pickupDeliveryChoice
+    pickupDeliveryChoice,
+    reciverEmail
 ) =>{
     const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -26,7 +27,7 @@ exports.sendEmail = async (
 
     const mailOptions = {
         from: senderMail,
-        to: receiverMail,
+        to: reciverEmail,
         subject: "Borrowing information",
         text: "Your borrowed media information.",
         html: `
