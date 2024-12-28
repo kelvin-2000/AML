@@ -82,11 +82,11 @@ const MediaCard: React.FC<{ item: IMediaItem }> = ({ item }) => {
             router.push(`/borrow?media=${item?.title}&id=${item?.media_id}`)
           }
           className={`px-2 py-0.5 text-xs rounded transition-colors ${
-            item.status === "Available"
+            item.status.toLowerCase() === "available"
               ? "bg-[rgba(255,255,255,0.1)] backdrop-blur-sm shadow-md hover:bg-muted hover:shadow-xl transition text-text"
               : "bg-[rgba(255,255,255,0.1)] shadow-md text-active cursor-not-allowed"
           }`}
-          disabled={item.quantity_available <= 0 || item.status !== "Available"}
+          disabled={item.quantity_available <= 0 || item.status.toLowerCase() !== "available"}
         >
           Borrow
         </Button>

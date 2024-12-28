@@ -46,3 +46,24 @@ exports.insertBorrowingRequest = (memberId, mediaId, dueDate, pickupDeliveryChoi
     });
 };
 
+exports.getMemberById = (memberId) => {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT member_id, CONCAT(member_id, '_', name) AS formatted_member, name, email, phone, address
+            FROM Member
+            WHERE member_id = ?
+        `;
+        db.query(query, [memberId], (err, results) => {
+            if (err) {
+                console.error('Error in getMemberById:', err);
+                return reject(new Error('Failed to retrieve member details.'));
+            }
+            if (results.length === 0) {
+                return reject(new Error('Member not found.'));
+            }
+            resolve(results[0]);
+        });
+    });
+};
+
+
