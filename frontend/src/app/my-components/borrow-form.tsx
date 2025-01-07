@@ -134,7 +134,8 @@ export const BorrowForm = (props: Props) => {
           </div>
         )}
         <CardHeader className="text-center">
-          <CardTitle className="text-xl font-bold text-active">
+          <CardTitle className="text-xl font-bold text-active"
+          aria-label="Borrow media">
             Borrow Media
           </CardTitle>
         </CardHeader>
@@ -143,18 +144,20 @@ export const BorrowForm = (props: Props) => {
             <div>
               <Label className="mb-2 text-sm font-medium text-gray-600">
                 Media Name
-              </Label>
+              
               <Input
                 name="mediaId"
                 value={String(media)}
                 disabled
                 className=" font-bold rounded"
+                aria-label="Input media name text box"
               />
+              </Label>
             </div>
             <div>
               <Label className="mb-2 text-sm font-medium text-gray-600">
                 Library Member
-              </Label>
+              
               <div className="flex gap-2">
                 <Input
                   name="memberId"
@@ -167,12 +170,15 @@ export const BorrowForm = (props: Props) => {
                   type="button"
                   onClick={fetchMemberDetails}
                   className="px-4 py-2 bg-active text-background rounded hover:bg-background hover:text-text"
+                  aria-label="Find memeber ID button"
                 >
                   {loading ? "Loading..." : "Find"}
                 </Button>
               </div>
+              </Label>
               {member && form.memberId && (
-                <Input value={member.name} disabled className="mt-2 rounded" />
+                <Input value={member.name} disabled className="mt-2 rounded"
+                aria-label="Input library memebr ID text box" />
               )}
               {memberError && (
                 <p className="mt-2 text-sm text-red-500">{memberError}</p>
@@ -182,14 +188,16 @@ export const BorrowForm = (props: Props) => {
               <div className={"flex-[0.5]"}>
                 <Label className="mb-2 text-sm font-medium text-gray-600">
                   Due Date
-                </Label>
+                
                 <Input
                   type="date"
                   name="dueDate"
                   value={form.dueDate}
                   onChange={handleChange}
                   className={"rounded"}
+                  aria-label="Due Date input text box"
                 />
+                </Label>
               </div>
               <div className={"flex-[0.5]"}>
                 <Label className="mb-2 text-sm font-medium text-gray-600">
@@ -220,6 +228,7 @@ export const BorrowForm = (props: Props) => {
               onClick={() => router.back()}
               type="button"
               className="w-full px-4 py-2 text-text rounded bg-muted hover:bg-background"
+              aria-label="Cancel button"
             >
               Cancel
             </Button>
@@ -227,6 +236,7 @@ export const BorrowForm = (props: Props) => {
               type="submit"
               disabled={loading}
               className="w-full px-4 py-2 text-white bg-active rounded hover:bg-muted hover:text-text flex justify-center items-center"
+              aria-label="Confirm borrowing button"
             >
               {loading ? (
                 <svg
